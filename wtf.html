@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+body { background-color: red; color: white; }
+    </style>
+    <title>WTF Generator</title>
+  </head>
+  <body ng-app="wtf">
+    <div class="generator" ng-controller="WTFCtrl">
+This is the wtf generator page {{ fred }}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <script>
+angular.module("wtf",[])
+  .controller('WTFCtrl',['$scope',function($scope){
+      $scope.fred = "jim";
+  }])
+;
+    </script>
+  </body>
+</html>

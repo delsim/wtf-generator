@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
     WTF-Generator for generating messages following a WTF moment.
     Copyright (C) 2014  Mark Gibbs (aka Delsim)
@@ -20,18 +21,44 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
 body { background-color: red; color: white; }
+.generator h1 { font-size: 8em; margin: 0 0 0 0;}
     </style>
     <title>WTF Generator</title>
   </head>
   <body ng-app="wtf">
     <div class="generator" ng-controller="WTFCtrl">
-This is the wtf generator page {{ fred }}
+      <h1>WTF</h1>
+      <div>
+        <ul>
+          <li ng-repeat="s in symptoms">{{s}}</li>
+          <li>???</li>
+        </ul>
+      </div>
+      <div>
+Source of bewilderment:
+      </div>
+      <div>
+Can you help me out here and
+        <ul>
+          <li ng-repeat="r in resolutions">{{r}}</li>
+          <li>???</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li ng-repeat="a in annotations">{{a}}</li>
+        </ul>
+      </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <script src="http://localhost:8400/static/js/angular.js"></script>
     <script>
 angular.module("wtf",[])
   .controller('WTFCtrl',['$scope',function($scope){
       $scope.fred = "jim";
+      $scope.annotations = ['FYI','FML','OMG','LOL'];
+      $scope.resolutions = ['Stop','Advise','Explain','Rescue me','Intervene','Dial 911'];
+      $scope.symptoms = ['Are you thinking','Are they thinking','Is going on','Was that','Did you think would happen','Seriously','I mean, simply, WTFF'];
   }])
 ;
     </script>

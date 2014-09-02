@@ -28,28 +28,17 @@ body { background-color: red; color: white; }
   <body ng-app="wtf">
     <div class="generator" ng-controller="WTFCtrl">
       <h1>WTF</h1>
-{{email.body}} and {{ selections }}
-      <div>
-        <ul ng-controller="SymptomsCtrl">
-          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
-          <li>???</li>
-        </ul>
-      </div>
+{{email.body}}
+      <ul ng-controller="SymptomsCtrl"><wtfitems/></ul>
       <div>
 Source of bewilderment:
+        <input type="text" ng-model="selections.bewilderment" ng-change="build_body()"/>
       </div>
       <div>
 Can you help me out here and
-        <ul ng-controller="ResolutionsCtrl">
-          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
-          <li>???</li>
-        </ul>
+        <ul ng-controller="ResolutionsCtrl"><wtfitems/></ul>
       </div>
-      <div>
-        <ul ng-controller="AnnotationsCtrl">
-          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
-        </ul>
-      </div>
+      <ul ng-controller="AnnotationsCtrl"><wtfitems/></ul>
       <a ng-href="mailto:{{email.target}}?subject={{email.subject}}&body={{email.body}}">WTF Generate!</a>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
@@ -57,7 +46,6 @@ Can you help me out here and
     <script>
 angular.module("wtf",[])
   .controller('WTFCtrl',['$scope',function($scope){
-      $scope.fred = "jim";
       $scope.annotations = ['FYI','FML','OMG','LOL'];
       $scope.resolutions = ['Stop','Advise','Explain','Rescue me','Intervene','Dial 911'];
       $scope.symptoms = ['Are you thinking','Are they thinking','Is going on','Was that','Did you think would happen','Seriously','I mean, simply, WTFF'];
@@ -65,14 +53,25 @@ angular.module("wtf",[])
       $scope.selections = {
           symptoms : {},
           resolutions : {},
-          annotations : {}
+          annotations : {},
+          bewilderment: ""
       };
-      // TODO replace this with proper body generation
-      // and also escaping
-      $scope.counter = 1;
       $scope.build_body = function() {
-          $scope.email.body = "blah " + $scope.counter;
-          $scope.counter += 1;
+          $scope.email.body = "We have had an WTF moment. To be clear: ";
+          for(var k in $scope.selections.symptoms) {
+              if( $scope.selections.symptoms[k] )
+                  $scope.email.body += " WTF " + k;
+          };
+          if( $scope.selections.bewilderment.length > 1 )
+              $scope.email.body += " Source of bewilderment: " + $scope.selections.bewilderment;
+          for(var k in $scope.selections.resolutions) {
+              if( $scope.selections.resolutions[k] )
+                  $scope.email.body += " Please " + k + ".";
+          };
+          for(var k in $scope.selections.annotations) {
+              if( $scope.selections.annotations[k] )
+                  $scope.email.body += " " + k + ".";
+          };
       };
   }])
   .controller('SymptomsCtrl',['$scope',function($scope) { $scope.category = "symptoms"; $scope.items = $scope.symptoms; }])
@@ -85,6 +84,13 @@ angular.module("wtf",[])
           $scope.build_body();
       });
   }])
+  .directive("wtfitems",function(){
+      return {
+          restrict: 'E',
+          replace: 'true',
+          template: '<li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}}</li>'
+      };
+  })
 ;
     </script>
   </body>

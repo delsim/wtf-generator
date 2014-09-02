@@ -28,9 +28,10 @@ body { background-color: red; color: white; }
   <body ng-app="wtf">
     <div class="generator" ng-controller="WTFCtrl">
       <h1>WTF</h1>
+{{email.body}} and {{ selections }}
       <div>
-        <ul>
-          <li ng-repeat="s in symptoms">{{s}}</li>
+        <ul ng-controller="SymptomsCtrl">
+          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
           <li>???</li>
         </ul>
       </div>
@@ -39,16 +40,17 @@ Source of bewilderment:
       </div>
       <div>
 Can you help me out here and
-        <ul>
-          <li ng-repeat="r in resolutions">{{r}}</li>
+        <ul ng-controller="ResolutionsCtrl">
+          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
           <li>???</li>
         </ul>
       </div>
       <div>
-        <ul>
-          <li ng-repeat="a in annotations">{{a}}</li>
+        <ul ng-controller="AnnotationsCtrl">
+          <li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}} {{selected}}</li>
         </ul>
       </div>
+      <a ng-href="mailto:{{email.target}}?subject={{email.subject}}&body={{email.body}}">WTF Generate!</a>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
     <script src="http://localhost:8400/static/js/angular.js"></script>
@@ -59,6 +61,29 @@ angular.module("wtf",[])
       $scope.annotations = ['FYI','FML','OMG','LOL'];
       $scope.resolutions = ['Stop','Advise','Explain','Rescue me','Intervene','Dial 911'];
       $scope.symptoms = ['Are you thinking','Are they thinking','Is going on','Was that','Did you think would happen','Seriously','I mean, simply, WTFF'];
+      $scope.email = {target:"a.person@example.com",subject:"WTF",body:"WTF Dude"};
+      $scope.selections = {
+          symptoms : {},
+          resolutions : {},
+          annotations : {}
+      };
+      // TODO replace this with proper body generation
+      // and also escaping
+      $scope.counter = 1;
+      $scope.build_body = function() {
+          $scope.email.body = "blah " + $scope.counter;
+          $scope.counter += 1;
+      };
+  }])
+  .controller('SymptomsCtrl',['$scope',function($scope) { $scope.category = "symptoms"; $scope.items = $scope.symptoms; }])
+  .controller('ResolutionsCtrl',['$scope',function($scope) { $scope.category = "resolutions"; $scope.items = $scope.resolutions; }])
+  .controller('AnnotationsCtrl',['$scope',function($scope) { $scope.category = "annotations"; $scope.items = $scope.annotations; }])
+  .controller('ToggleCtrl',['$scope','$timeout',function($scope,$timeout){
+      $scope.selected = false;
+      $scope.$watch("selected",function(selected) {
+          $scope.selections[$scope.category][$scope.item] = selected;
+          $scope.build_body();
+      });
   }])
 ;
     </script>

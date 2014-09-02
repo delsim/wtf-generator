@@ -46,9 +46,9 @@ Can you help me out here and
     <script>
 angular.module("wtf",[])
   .controller('WTFCtrl',['$scope',function($scope){
-      $scope.annotations = ['FYI','FML','OMG','LOL'];
-      $scope.resolutions = ['Stop','Advise','Explain','Rescue me','Intervene','Dial 911'];
-      $scope.symptoms = ['Are you thinking','Are they thinking','Is going on','Was that','Did you think would happen','Seriously','I mean, simply, WTFF'];
+      $scope.annotations = [['FYI','FYI'],['FML','FML'],['OMG','OMG'],['LOL','LOL']];
+      $scope.resolutions = [['Stop','Please stop it.'],['Advise','Please advise.'],['Explain','Can you explain it to me?'],['Rescue me','Please rescue me'],['Intervene','I need an intervention.'],['Dial 911','Get a phone and dial 911 immediately.']];
+      $scope.symptoms = [['Are you thinking','WTF are you thinking?'],['Are they thinking','WTF are they thinking?'],['Is going on','WTF is going on'],['Was that','WTF was that'],['Did you think would happen','WTF did you think would happen'],['Seriously','Seriously, WTF. Seriously.'],['I mean, simply, WTFF','I mean, simply, WTFF.']];
       $scope.email = {target:"a.person@example.com",subject:"WTF",body:"WTF Dude"};
       $scope.selections = {
           symptoms : {},
@@ -56,22 +56,19 @@ angular.module("wtf",[])
           annotations : {},
           bewilderment: ""
       };
+      $scope.handle_items = function(map) {
+          for(var key in map) {
+              if( map[key] )
+                  $scope.email.body += " " + map[key];
+          };
+      };
       $scope.build_body = function() {
           $scope.email.body = "We have had an WTF moment. To be clear: ";
-          for(var k in $scope.selections.symptoms) {
-              if( $scope.selections.symptoms[k] )
-                  $scope.email.body += " WTF " + k;
-          };
+          $scope.handle_items($scope.selections.symptoms);
           if( $scope.selections.bewilderment.length > 1 )
               $scope.email.body += " Source of bewilderment: " + $scope.selections.bewilderment;
-          for(var k in $scope.selections.resolutions) {
-              if( $scope.selections.resolutions[k] )
-                  $scope.email.body += " Please " + k + ".";
-          };
-          for(var k in $scope.selections.annotations) {
-              if( $scope.selections.annotations[k] )
-                  $scope.email.body += " " + k + ".";
-          };
+          $scope.handle_items($scope.selections.resolutions);
+          $scope.handle_items($scope.selections.annotations);
       };
   }])
   .controller('SymptomsCtrl',['$scope',function($scope) { $scope.category = "symptoms"; $scope.items = $scope.symptoms; }])
@@ -80,7 +77,11 @@ angular.module("wtf",[])
   .controller('ToggleCtrl',['$scope','$timeout',function($scope,$timeout){
       $scope.selected = false;
       $scope.$watch("selected",function(selected) {
-          $scope.selections[$scope.category][$scope.item] = selected;
+          if( selected ) {
+              $scope.selections[$scope.category][$scope.item[0]] = $scope.item[1];
+          } else {
+              $scope.selections[$scope.category][$scope.item[0]] = false;
+          }
           $scope.build_body();
       });
   }])
@@ -88,7 +89,7 @@ angular.module("wtf",[])
       return {
           restrict: 'E',
           replace: 'true',
-          template: '<li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item}}</li>'
+          template: '<li ng-repeat="item in items" ng-controller="ToggleCtrl"><input type="checkbox" ng-model="selected"/>{{item[0]}}</li>'
       };
   })
 ;

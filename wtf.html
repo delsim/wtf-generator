@@ -28,6 +28,7 @@ body { background-color: red; color: white; }
   <body ng-app="wtf">
     <div class="generator" ng-controller="WTFCtrl">
       <h1>WTF</h1>
+        Dear <input type="text" ng-model="selections.name" ng-change="build_body()"/>
 {{email.body}}
       <ul ng-controller="SymptomsCtrl"><wtfitems/></ul>
       <div>
@@ -63,7 +64,7 @@ angular.module("wtf",[])
           };
       };
       $scope.build_body = function() {
-          $scope.email.body = "We have had an WTF moment. To be clear: ";
+          $scope.email.body = "Dear "+$scope.selections.name+" We have had an WTF moment. To be clear: ";
           $scope.handle_items($scope.selections.symptoms);
           if( $scope.selections.bewilderment.length > 1 )
               $scope.email.body += " Source of bewilderment: " + $scope.selections.bewilderment;

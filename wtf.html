@@ -22,6 +22,7 @@
     <style>
 body { background-color: red; color: white; }
 .generator h1 { font-size: 8em; margin: 0 0 0 0;}
+.email_box { color: yellow; }
     </style>
     <title>WTF Generator</title>
   </head>
@@ -29,7 +30,9 @@ body { background-color: red; color: white; }
     <div class="generator" ng-controller="WTFCtrl">
       <h1>WTF</h1>
         Dear <input type="text" ng-model="selections.name" ng-change="build_body()"/>
-{{email.body}}
+        Email <input type="text" ng-model="email.target" ng-change="build_body()"/>
+        <div class="email_box" ng-bind-html="pretty_body">
+        </div>
       <ul ng-controller="SymptomsCtrl"><wtfitems/></ul>
       <div>
 Source of bewilderment:
@@ -44,9 +47,11 @@ Can you help me out here and
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
     <script src="http://localhost:8400/static/js/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-sanitize.min.js"></script>
+    <script src="http://localhost:8400/static/js/angular-sanitize.js"></script>
     <script>
-angular.module("wtf",[])
-  .controller('WTFCtrl',['$scope',function($scope){
+angular.module("wtf",['ngSanitize'])
+  .controller('WTFCtrl',['$scope','$sce',function($scope,$sce){
       $scope.annotations = [['FYI','FYI'],['FML','FML'],['OMG','OMG'],['LOL','LOL']];
       $scope.resolutions = [['Stop','Please stop it.'],['Advise','Please advise.'],['Explain','Can you explain it to me?'],['Rescue me','Please rescue me'],['Intervene','I need an intervention.'],['Dial 911','Get a phone and dial 911 immediately.']];
       $scope.symptoms = [['Are you thinking','WTF are you thinking?'],['Are they thinking','WTF are they thinking?'],['Is going on','WTF is going on'],['Was that','WTF was that'],['Did you think would happen','WTF did you think would happen'],['Seriously','Seriously, WTF. Seriously.'],['I mean, simply, WTFF','I mean, simply, WTFF.']];
@@ -58,18 +63,28 @@ angular.module("wtf",[])
           bewilderment: ""
       };
       $scope.handle_items = function(map) {
+          var eString = "";
           for(var key in map) {
               if( map[key] )
-                  $scope.email.body += " " + map[key];
+                  eString += " " + map[key];
           };
+          return eString;
+      };
+      $scope.make_body = function(line_feed) {
+          var eString = "Dear "+$scope.selections.name + line_feed;
+          eString += " We have had an WTF moment." + line_feed + "To be clear: ";
+          eString += $scope.handle_items($scope.selections.symptoms);
+          if( $scope.selections.bewilderment.length > 1 )
+              eString += line_feed + " Source of bewilderment: " + $scope.selections.bewilderment;
+          eString += line_feed;
+          eString += $scope.handle_items($scope.selections.resolutions);
+          eString += line_feed;
+          eString += $scope.handle_items($scope.selections.annotations);
+          return eString;
       };
       $scope.build_body = function() {
-          $scope.email.body = "Dear "+$scope.selections.name+" We have had an WTF moment. To be clear: ";
-          $scope.handle_items($scope.selections.symptoms);
-          if( $scope.selections.bewilderment.length > 1 )
-              $scope.email.body += " Source of bewilderment: " + $scope.selections.bewilderment;
-          $scope.handle_items($scope.selections.resolutions);
-          $scope.handle_items($scope.selections.annotations);
+          $scope.email.body = $scope.make_body("%0D%0A");
+          $scope.pretty_body = $sce.trustAsHtml("<div>" + $scope.make_body("</div><div>") + "</div>");
       };
   }])
   .controller('SymptomsCtrl',['$scope',function($scope) { $scope.category = "symptoms"; $scope.items = $scope.symptoms; }])

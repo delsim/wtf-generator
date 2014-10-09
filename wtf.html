@@ -35,16 +35,16 @@ ul { list-style-type: none; padding: 0; margin: 0;}
         Dear <input type="text" ng-model="email.name" ng-change="build_body()" placeholder="Name"/>
         Email <input type="text" ng-model="email.target" ng-change="build_body()" placeholder="my.email@example.com"/>
         <div class="email_box" ng-bind-html="pretty_body"></div>
-        <ul ng-controller="SymptomsCtrl"><wtfitems/></ul>
+        <ul ng-controller="WTFItemsCtrl" ng-init="category='symptoms';"><wtfitems/></ul>
       <div>
 Source of bewilderment:
         <input type="text" ng-model="selections.bewilderment" ng-change="build_body()" placeholder="Describe befuddlement here"/>
       </div>
       <div>
 Can you help me out here and
-        <ul ng-controller="ResolutionsCtrl"><wtfitems/></ul>
+        <ul ng-controller="WTFItemsCtrl" ng-init="category='resolutions';"><wtfitems/></ul>
       </div>
-      <ul class="annotations" ng-controller="AnnotationsCtrl"><wtfitems/></ul>
+      <ul class="annotations" ng-controller="WTFItemsCtrl" ng-init="category='annotations';"><wtfitems/></ul>
       <a ng-href="mailto:{{email.target}}?subject={{email.subject}}&body={{email.body}}">WTF Generate!</a>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
@@ -93,9 +93,7 @@ angular.module("wtf",['ngSanitize'])
           $scope.pretty_body = $sce.trustAsHtml("<div>" + $scope.make_body("</div><div>") + "</div>");
       };
   }])
-  .controller('SymptomsCtrl',['$scope',function($scope) { $scope.category = "symptoms"; }])
-  .controller('ResolutionsCtrl',['$scope',function($scope) { $scope.category = "resolutions"; }])
-  .controller('AnnotationsCtrl',['$scope',function($scope) { $scope.category = "annotations"; }])
+  .controller('WTFItemsCtrl',['$scope',function($scope) { $scope.category = "UNSET"; }])
   .controller('ToggleCtrl',['$scope','$timeout',function($scope,$timeout){
       $scope.selected = false;
       $scope.$watch("selected",function(selected) {

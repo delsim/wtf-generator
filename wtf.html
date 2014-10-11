@@ -16,36 +16,41 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://localhost:8400/static/css/bootstrap.min.css" rel="stylesheet">
     <style>
 body { background-color: red; color: white; }
 .generator h1 { font-size: 8em; margin: 0 0 0 0;}
 .email_box { color: yellow; }
+.border_box { border-radius: 15px; border: 2px solid; padding: 10px 10px 10px 10px; margin: 10px 10px 10px 10px; }
 ul { list-style-type: none; padding: 0; margin: 0;}
-.annotations { border-color: black; border: 10px; }
+.annotations { }
 .annotations li { display: inline; }
     </style>
     <title>WTF Generator</title>
   </head>
   <body ng-app="wtf">
     <div class="generator" ng-controller="WTFCtrl">
-      <h1>WTF</h1>
+      <h1>WTF?</h1>
+        <div class="border_box">
         Dear <input type="text" ng-model="email.name" ng-change="build_body()" placeholder="Name"/>
         Email <input type="text" ng-model="email.target" ng-change="build_body()" placeholder="my.email@example.com"/>
         <div class="email_box" ng-bind-html="pretty_body"></div>
-        <ul ng-controller="WTFItemsCtrl" ng-init="category='symptoms';"><wtfitems/></ul>
-      <div>
-Source of bewilderment:
-        <input type="text" ng-model="selections.bewilderment" ng-change="build_body()" placeholder="Describe befuddlement here"/>
+        </div>
+        <ul class="border_box" ng-controller="WTFItemsCtrl" ng-init="category='symptoms';"><wtfitems/></ul>
+      <div class="border_box" >
+        <div>Source of bewilderment:</div>
+        <textarea cols="50" rows="6" ng-model="selections.bewilderment" ng-change="build_body()" placeholder="Describe befuddlement here"></textarea>
       </div>
-      <div>
+      <div class="border_box">
 Can you help me out here and
         <ul ng-controller="WTFItemsCtrl" ng-init="category='resolutions';"><wtfitems/></ul>
       </div>
-      <ul class="annotations" ng-controller="WTFItemsCtrl" ng-init="category='annotations';"><wtfitems/></ul>
-      <a ng-href="mailto:{{email.target}}?subject={{email.subject}}&body={{email.body}}">WTF Generate!</a>
+      <ul class="annotations border_box" ng-controller="WTFItemsCtrl" ng-init="category='annotations';"><wtfitems/></ul>
+      <a class="btn btn-primary btn-lg active" ng-href="mailto:{{email.target}}?subject={{email.subject}}&body={{email.body}}">WTF Generate!</a>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
     <script src="http://localhost:8400/static/js/angular.js"></script>
